@@ -1,0 +1,17 @@
+; LDP instruction demo
+; Composite function behaviour
+
+LDP A     ; Get address of next instruction
+ADD D, 2  ; Add 2 to the address and store in D
+JMP :func ; Jump to function (Return address saved in D)
+STR A, 15 ; Display A
+HLT       ; Halt
+
+:func
+LDI A, 4  ; Set A to 4
+ADD A, A  ; Shift left A 4 times
+ADD A, A
+ADD A, A
+ADD A, A
+ADD A, 5  ; Add 5 to A
+JMP D     ; Return

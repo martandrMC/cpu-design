@@ -1,0 +1,27 @@
+; 8bit Collatz Algorithm program
+; Includes cycle counting
+; Digit display peripheral at data memory address 15
+; Initial value retrieved from data memory address 0
+
+LOD A, 0  ; Load initial value from data memory
+LDI C, 0  ; Initialize cycle counter
+:loop
+STR A, 15 ; Display current value
+SUB B, 1  ; Subtract 1 from A and save in B
+BRZ :end  ; If A was 1, finish
+MOV A, C  ; Move C to A
+ADD C, 1  ; Increment A
+LOD A, 15 ; Restore A by reading from display
+LDI B, 1  ; Set B to 1
+AND B, B  ; Bitwise AND A with B
+BRZ :even ; Jump if LSB of A was 0
+ADD B, A  ; Save the double of A to B
+ADD A, B  ; Add B to A, results in tripling A
+ADD A, 1  ; Add an extra 1 to A
+JMP :loop ; Repeat
+:even
+RSH A, A  ; Divide A by 2
+JMP :loop ; Repeat
+:end
+STR C, 15 ; Display cycle counter
+HLT       ; Halt Execution

@@ -1,0 +1,13 @@
+; 8bit Looping Fibonacci program
+; Digit display peripheral at data memory address 15
+
+:init
+LDI A, 1  ; Initialize A with 1
+LDI B, 0  ; Initialize B with 0
+:loop
+STR A, 15 ; Display content of A
+ADD C, B  ; C = A + B
+BRC :init ; Reset state if addition overflowed
+MOV B, A  ; Move A to B
+MOV A, C  ; Move new term to A
+JMP :loop
