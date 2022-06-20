@@ -1,0 +1,42 @@
+A -- |   OP-4   | SRA-2 | DRA-2 |
+B -- |   OP-4   | SRA-2 | DRA-2 | -- | IMM-8 |
+C -- |       OP-6       | DRA-2 |
+D -- |       OP-6       | DRA-2 | -- | IMM-8 |
+
+									ddmm wxxx xxxx check?
+									----|----|----|------
+A ADD d,s		d+=s				0000 1000 0000	yes
+A ADC d,s		d+=s+c				0000 1000 0010	yes
+A SUB d,s		d-=s				0000 1000 0001	no
+A SBB d,s		d-=s-c				0000 1000 0011	no
+
+A AND d,s		d&=s				0000 1000 0100	no
+A IOR d,s		d|=s				0000 1000 0101	no
+A NOR d,s		d=~(d|s)			0000 1000 0110	no
+A XOR d,s		d^=s				0000 1000 0111	no
+
+A MOV d,s		d=s					0000 1000 1010	yes
+B BNZ d,s+i		if d!=0 : pc=s+i	0100 0110 0011	no
+B MST d,s+i		[s+i]=d				0101 0010 0000	yes
+B MLD d,s+i		d=[s+i]				0110 1010 0000	yes
+
+| C RSH d		{0,d}>>=1			0000 1000 1000	no
+| C RSC d		{c,d}>>=1			0000 1000 1001	no
+| D ADD d,i		d+=i				0100 1001 0000	yes
+| D AND d,i		d&=i				0100 1001 0100	yes
+\_______/
+| C PSH d		[sp]=d ; sp-=1		0001 0000 1100	yes
+| C POP d		sp+=1  ; d=[sp]		0010 1000 1101	yes
+| C SLD d		sp=d				0000 0000 1111	yes
+| D BRC i		if c : pc=i			0100 0111 0010	yes
+\_______/
+| C PST d		d=pc				0000 1100 0000	yes
+| C PLD d		pc=d				0000 0110 1001	yes
+| D PLD i		pc=i				0100 0111 0001	yes
+| D BNZ d,i		if d!=0 : pc=i		0100 0111 0011	no
+\_______/
+| D MST d,i		[i]=d				0101 0011 0000	yes
+| D MLD d,i		d=[i]				0110 1011 0000
+| D RLD d,i		d=i					0100 1011 0000	yes
+| C HLT								1000 0000 0000	yes
+\_______/

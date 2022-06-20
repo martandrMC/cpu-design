@@ -1,0 +1,16 @@
+rld r0, 253
+sld r0
+rld r0, 1
+loop:
+add r1, r0
+adc r3, r2
+brc exit
+nop
+mst r1, 254
+mst r3, 255
+swp r0, r1
+swp r2, r3
+pld loop
+nop
+exit:
+hlt

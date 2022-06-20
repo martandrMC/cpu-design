@@ -1,0 +1,20 @@
+start:
+rld r3, 1   ; r3 const 1
+mld r2, msg ; r2 str length
+rld r1, 1   ; r1 pointer to char
+loop:
+mld r0, r1, msg ; put char into r0
+mst r0, 255     ; send char to telnet
+add r1, r3      ; increment pointer
+sub r2, r3      ; decrement length
+bnz r2, loop    ; loop until length = 0
+nop
+pld start       ; repeat forever
+nop
+
+msg:
+#d8 _msg_end-_msg_begin ; length prefixed
+_msg_begin:
+#d "Hello, world!\r\n"
+#d8 7 ; ding
+_msg_end:

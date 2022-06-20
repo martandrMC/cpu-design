@@ -1,0 +1,8 @@
+rld r0, 4
+cal r3, func
+mst r0, 255
+
+hlt
+func:
+pld r3
+add r0, 1
