@@ -1,0 +1,32 @@
+Color RAM: 512 x 16bit ( 1 FPGA Memory Block @ 512x16 )
+Video RAM: 8192 x 16bit ( 16 FPGA Memory Blocks @ 512x16 )
+
+Monochrome Bit Map: 320x240 @ 2 colors
+- Single Screen Buffer: 512 x 256 x 1bit
+- 8bit global palette select
+High-Res Bit Map: 160x120 @ 16 colors
+- Single Screen Buffer: 256 x 128 x 4bit
+- 5bit global palette select
+Low-Res Bit Map: 80x60 @ 256 colors
+- Dual Screen Buffer: 2 x 128 x 64 x 8bit
+- 1bit global palette select
+Character Map: 320x240 @ 512 colors
+- Dual Screen Buffer: 2 x 64 x 32 x 16bit
+- - 64 x 32 characters per screen
+- - Flip-XY + Rotate per character
+- - 5bit palette select per character
+- - 8bit character select
+- Character Table: 256 x 8 x 8 x 4bit
+- - 8 x 8 pixels per character
+- - 4bit color select per pixel
+
+VGA Control Register 1: 11bit
+- Bits 9-10: Mode Select
+- Bit 8: Buffer Select
+- Bits 0-7: Global Palette
+
+VGA Control Register 2: 9bit
+- Bits 0-8: Horizontal Scroll
+
+VGA Control Register 3: 8bit
+- Bits 0-7: Vertical Scroll
