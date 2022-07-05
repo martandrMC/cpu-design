@@ -6,7 +6,7 @@ This repository contains all relevant info about (most) processor architectures 
 
 - MAPLU 1: [Puny Processing Unit](ppu)
 - MAPLU 2: [Smolproc](smolproc)
-- MAPLU 3: PHINIX (Development Active)
+- MAPLU 3: [PHINIX](phinix)
 - MAPLU 4: PHINIX+ (Planned)
 - MAPLU 5: Pipedream (Planned)
 
@@ -42,8 +42,7 @@ This repository contains all relevant info about (most) processor architectures 
 
     The Pipelined INteger Instruction eXecutor is the processor that ended up emerging after the
     development of the architecture that Smolproc was based off of continued. It features an even
-    deeper 6 stage pipeline with a dual write register file and a word size of 16 bits. Development
-    on this architecture is ongoing.
+    deeper 6 stage pipeline with a dual write register file and a word size of 16 bits.
 
 ### PHINIX+
 
