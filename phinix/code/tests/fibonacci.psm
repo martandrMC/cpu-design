@@ -1,0 +1,24 @@
+nul v0
+nul v2
+imm v1 1
+add v2 v0
+br ip -4 cr
+mov v0 v1
+mov v1 v2
+out v2 0xFF
+add v2 v0
+br ip -9 cr
+mov v0 v1
+mov v1 v2
+out v2 0xFF
+add v2 v0
+br ip -14 cr
+mov v0 v1
+mov v1 v2
+out v2 0xFF
+add v2 v0
+br ip -19 cr
+mov v0 v1
+mov v1 v2
+out v2 0xFF
+jmp ip -20

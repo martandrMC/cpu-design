@@ -1,0 +1,313 @@
+-----------------------------------------Instruction Formats----------------------------------------
+	Bs - |     OPC-8     | SRC-4 | DST-4 |
+	Bl - |     OPC-8     | SRC-4 | DST-4 ||             IMM-16            |
+	Us - |     OPC-8     | IMM-4 | DST-4 |
+	Ul - | OPC-4 |     IMM-8     | DST-4 |
+	N  - |     OPC-8     |     IMM-8     |
+----------------------------------------------------------------------------------------------------
+
+----------------------------------------------Registers---------------------------------------------
+	r0  | $zr | Constant Zero       | None
+	r1  | $rp | Return Pointer      | Caller
+	r2  | $v0 | Volatile GPR        | Caller
+	r3  | $v1 | Volatile GPR        | Caller
+	r4  | $v2 | Volatile GPR        | Caller
+	r5  | $v3 | Volatile GPR        | Caller
+	r6  | $a0 | Function Argument   | Caller
+	r7  | $a1 | Function Argument   | Caller
+	r8  | $a2 | Function Argument   | Caller
+	r9  | $s0 | Saved GPR           | Callee
+	r10 | $s1 | Saved GPR           | Callee
+	r11 | $s2 | Saved GPR           | Callee
+	r12 | $s3 | Saved GPR           | Callee
+	r13 | $s4 | Saved GPR           | Callee
+	r14 | $fp | Frame Pointer       | Callee
+	r15 | $sp | Stack Pointer       | Callee
+	
+	    | $ip | Instruction Pointer | None
+	    | $st | Status Register     | None
+	    | $rf | Condition Reference | Caller
+----------------------------------------------------------------------------------------------------
+
+-------------------------------------------Pointer Updates------------------------------------------
+	00 | No Change      | (x)
+	01 | Pre-Decrement  | -(x)
+	10 | Post-Increment | (x)+
+	11 | Pre-Increment  | +(x)
+----------------------------------------------------------------------------------------------------
+cr ov zr nz nc bl lt ae be le eq nq
+
+nzr zer nrf ref pos neg evn odd
+-----------------------------------------Branching Criteria-----------------------------------------
+	Conditions (Derived from flags)
+	_______________________________________________
+	000 Carry / Above or Equal	C
+	001 Overflow				V
+	010 Zero / Equal			Z
+	011 Non-Zero / Unequal		~Z
+	100 Not-Carry / Below		~C
+	101 Below or Equal			~C + Z
+	110 Less					S!=V
+	111 Less or Equal			S!=V + Z
+	
+	Properties (Derived from data)
+	________________________________________________
+	000 Zero					~| rx
+	001 Reference				& (rx ~^ $rf)
+	010 Negative				rx[15]
+	011 Odd						rx[0]
+	100 Non-Zero				| rx
+	101 Non-Reference			~& (rx ~^ $rf)
+	110 Positive				~rx[15]
+	111 Even					~rx[0]
+	
+----------------------------------------------------------------------------------------------------
+
+====================================================================================================
+
+16-------------------------------------Arithmetic Instructions--------------------------------------
+	Bs | ADDr | Register Add             | rD += rS       | rD += rS
+	Bs | ADCr | Register Add-Carry       | rD += rS + C   | rD +=+ rS
+	Bs | SUBr | Register Subtract        | rD -= rS       | rD -= rS
+	Bs | SBCr | Register Subtract-Carry  | rD -= rS - !C  | rD -=- rS
+	
+	Bl | ADDi | Immediate Add            | rD = rS + Im16 | rD = rS + Im16
+	Bl | SUBi | Immediate Subtract       | rD = rS - Im16 | rD = rS - Im16
+	
+	Bs | INC  | Register Increment       | rD = rS + 1    | rD = rS+
+	Bs | DEC  | Register Decrement       | rD = rS - 1    | rD = rS-
+	
+	Bs | CMPr | Register Compare         | rS - rD        | rS -- rD
+	Bl | CMPi | Immediate Compare        | rS - Im16      | rS -- Im16
+	
+	Bs | NEG  | Register Negate          | rD = ~rS + 1   | rD = -rS
+	Us | BXT  | Register Bit Extract     | C = rD[Im4]    | 
+	
+	Bs | UML  | Unsigned Long Multiply   | rDrS = rD * rS | rD * rS
+	Bs | SML  | Signed Long Multiply     | rDrS = rD * rS | rD ** rS
+	Bs | MULr | Short Register Multiply  | rD *= rS       | rD *= rS
+	Bl | MULi | Short Immediate Multiply | rD = rS * Im16 | rD = rS * Im16
+----------------------------------------------------------------------------------------------------
+
+8------------------------------------Bitwise Logic Instructions-------------------------------------
+	Bs | ANDr | Register Bitwise AND  | rD &= rS          | rD &= rS
+	Bs | IORr | Register Bitwise IOR  | rD |= rS          | rD |= rS
+	Bs | NORr | Register Bitwise NOR  | rD = ~(rD | rS)   | rD ~= rS
+	Bs | XORr | Register Bitwise XOR  | rD ^= rS          | rD ^= rS
+	
+	Bl | ANDi | Immediate Bitwise AND | rD = rS & Im16    | rD = rS & Im16
+	Bl | IORi | Immediate Bitwise IOR | rD = rS | Im16    | rD = rS | Im16
+	Bl | NORi | Immediate Bitwise NOR | rD = ~(rS | Im16) | rD = rS ~ Im16
+	Bl | XORi | Immediate Bitwise XOR | rD = rS ^ Im16    | rD = rS ^ Im16
+----------------------------------------------------------------------------------------------------
+
+8---------------------------------------Bitshift Instructions---------------------------------------
+	Bs | LSR  | Logical Shift Right           | rD = rS >> 1 (Logical)            | rD = rS>
+	Bs | LCR  | Logical Shift-Carry Right     | rD = rS >> 1 (Logical Thru Carry) | rD = >rS>
+	Us | LBR  | Logical Barrel-Shift Right    | rD >>= Im4 (Logical)              |
+	
+	Bs | LSL  | Logical Shift Left            | rD = rS << 1 (Logical)            | rD = <rS
+	Bs | LCL  | Logical Shift-Carry Left      | rD = rS << 1 (Logical Thru Carry) | rD = <rS<
+	Us | LBL  | Logical Barrel-Shift Left     | rD <<= Im4 (Logical)              |
+	
+	Bs | ASR  | Arithmetic Shift Right        | rD = rS >> 1 (Arithmetic)         | rD = rS>>
+	Us | ABR  | Arithmetic Barrel-Shift Right | rD >>= Im4 (Arithmetic)           |
+----------------------------------------------------------------------------------------------------
+
+43------------------------------------Flow Control Instructions-------------------------------------
+	Bs | BRCr | Register Addressed Branch on Condtion     | CND ?    Pc = rS             | goto rS if CND
+	Bs | BRPr | Register Addressed Branch on Property     | PRP-rD ? Pc = rS             | goto rS if rD:PRP
+	Bl | BRCi | Base/Offset Addressed Branch on Condition | CND ?    Pc = rS + Im16      | goto :label rS if CND
+	Bl | BRPi | Base/Offset Addressed Branch on Property  | PRP-rD ? Pc = rS + Im16      | goto :label rS if rD:PRP
+	N  | BRCo | Offset Branch on Condition                | CND ?    Pc += SXT(Im8)      | goto Im8
+	
+	Bs | JNLr | Register Addressed Jump and Link          | rD = Pc + 1 ; Pc = rS        |  call rS
+	Bl | JNLi | Base/Offset Addressed Jump and Link       | rD = Pc + 2 ; Pc = rS + Im16 |  call :funclabel rS:
+	N  | JNLo | Offset Jump and Link                      | r1 = Pc + 1 ; Pc += SXT(Im8) |  call Im8
+	N  | JMPo | Offset Jump                               | PC += SXT(Im8)               |
+----------------------------------------------------------------------------------------------------
+
+40--------------------------Compound Condition Manipulation Instructions----------------------------
+	Us | RBCC | Bit Conjunction of Reference Register on Condition | $rf[Im4] &= CND        |
+	Us | RBDC | Bit Disjunction of Reference Register on Condition | $rf[Im4] |= CND        |
+	Us | RBCP | Bit Conjunction of Reference Register on Property  | $rf[Im4] &= PRP-rD     |
+	Us | RBDP | Bit Disjunction of Reference Register on Property  | $rf[Im4] |= PRP-rD     |
+	
+	N  | RBM | Reference Register Bit Move                         | $rf[Im4a] = $rf[Im4b]  |
+	N  | RBN | Reference Register Bit Negate                       | $rf[Im4a] = !$rf[Im4b] |
+	N  | RBC | Reference Register Bit Conjunction                  | $rf[Im4a] &= $rf[Im4b] |
+	N  | RBD | Reference Register Bit Disjunction                  | $rf[Im4a] |= $rf[Im4b] |
+	
+	Bs | LRFr | Load Reference Register from Register              | $rf = rS               |
+	Bl | LRFi | Load Reference Register from Immediate             | $rf = Im16             |
+	Bs | SRF  | Store Reference Register to Register               | rD = $rf               |
+	Us | RXT  | Reference Register Bit Extract                     | C = $rf[Im4]           |
+----------------------------------------------------------------------------------------------------
+
+96-----------------------------------Memory Access Instructions-------------------------------------
+	Bs | MLDr | Register Addressed Memory Load to Register       | rD = (rS)        | rD = (rS)
+	Bs | MSTr | Register Addressed Memory Store from Register    | (rS) = rD        | (rS) = rD
+	
+	Bl | MLDi | Base/Offset Addressed Memory Load to Register    | rD = (rS + Im16) | rD = (:label rS)
+	Bl | MSTi | Base/Offset Addressed Memory Store from Register | (rS + Im16) = rD | (:label rS) = rS
+	
+	Ul | MLDf | Frame Pointer Relative Load to Register          | rD = (r14 + Im8) | rD = [Im8]
+	Ul | MSTf | Frame Pointer Relative Store from Register       | (r14 + Im8) = rD | [Im8] = rD
+	
+	Ul | LSI  | Small Immediate Load to Register                 | rD = SXT(Im8)    | rD = Im8
+	Ul | INP  | I/O Port Read to Register                        | rD = {Im8}       | 
+	Ul | OUT  | I/O Port Write from Register                     | {Im8} = rD       | 
+----------------------------------------------------------------------------------------------------
+
+19-----------------------------------Data Movement Instructions-------------------------------------
+	Bs | MOV  | Register Move                        | rD = rS                       | rD = rS
+	Bs | MVC  | Register Move on Condition           | CND ? rD = rS                 | rD = rS if CND
+	Bs | MVP  | Register Move on Property            | PRP-rD ? rD = rS              | rD:PRP = rS
+	
+	Bs | SWP  | Register Swap                        | rD' = rS ; rS = rD ; rD = rD' | rD # rS
+	Bs | SWB  | Register Byte Swap                   | rDh = rSl ; rDl = rSh         | rD = #rS
+----------------------------------------------------------------------------------------------------
+
+====================================================================================================
+
+register		v0				R
+litr-extd		42069dx			X
+litr-short		15ds			S
+reg-litr-extd	v0+42069dx		RX
+fp-litr-long	fp+255dl		FL
+litr-long		255dl			L
+property		v0:zer			P
+condition		cr				C
+ip-litr-long	ip+255dl		IL
+reference		rf				F
+
+JUMP OFFSET:
+BXT zr 0ds
+BRCo {target} nc
+
+---------------------------------------------Opcode Map---------------------------------------------
+_________________________________________________________________________
+| OPCODE | INSTR | DBXMW | wwmmmmxx xxxxxxbb bbbbbbbb bbbbbbbb ffffdddd |
+|________|_______|_______|______________________________________________|
+|00000000| ADDr  |   * * | 01000001 00000000 00000000 00000000 11110000 | ADD v0 v1
+|00000001| ADCr  |   * * | 01000001 00100000 00000000 00000000 11110000 | ADC v0 v1
+|00000010| SUBr  |   * * | 01000001 00011000 00000000 00000000 11110000 | SUB v0 v1
+|00000011| SBCr  |   * * | 01000001 00101000 00000000 00000000 11110000 | SBC v0 v1
+|00000100| ADDi  | *** * | 01000001 00000000 00000010 11010100 10101000 | ADD v0 v1 42069dx
+|00000101| INC   |  *  * | 01000000 00000000 00000000 11000010 00100000 | INC v0 v1
+|00000110| SUBi  | *** * | 01000001 00010100 00000010 11010100 10101000 | SUB v0 v1 42069dx
+|00000111| DEC   |  *  * | 01000000 00000000 00000000 11001010 00100000 | DEC v0 v1
+|00001000| MULr  |   * * | 01000001 11111000 00000000 00000000 11110000 | MUL v0 v1
+|00001001| MULi  | *** * | 01000001 11111000 00000010 11010100 10101000 | MUL v0 v1 42069dx
+|00001010| UML   |   * * | 11000011 11111000 00000000 00000000 11110000 | UML v0 v1
+|00001011| SML   |   * * | 11000011 11111100 00000000 00000000 11110000 | SML v0 v1
+|00001100| CMPr  |   *   | 00000001 00011000 00000000 00000000 11110000 | CMP v0 v1
+|00001101| CMPi  | * *   | 00000001 00011000 00000010 11010100 10100000 | CMP v0 42069dx
+|00001110| NEG   |  *  * | 01000000 00000000 00000001 11000000 00100000 | NEG v0 v1
+|00001111| BXT   |  *    | 00000000 00000001 00000000 00000000 00010000 | BXT v0 15ds
+|________|_______|_______|______________________________________________|
+|00010000| ANDr  |   * * | 01000001 01101100 00000000 00000000 11110000 | AND v0 v1
+|00010001| IORr  |   * * | 01000001 01000000 00000000 00000000 11110000 | IOR v0 v1
+|00010010| NORr  |   * * | 01000001 01100000 00000000 00000000 11110000 | NOR v0 v1
+|00010011| XORr  |   * * | 01000001 01010000 00000000 00000000 11110000 | XOR v0 v1
+|00010100| ANDi  | *** * | 01000001 01101100 00000010 11010100 10101000 | AND v0 v1 42069dx
+|00010101| IORi  | *** * | 01000001 01000000 00000010 11010100 10101000 | IOR v0 v1 42069dx
+|00010110| NORi  | *** * | 01000001 01100000 00000010 11010100 10101000 | NOR v0 v1 42069dx
+|00010111| XORi  | *** * | 01000001 01010000 00000010 11010100 10101000 | XOR v0 v1 42069dx
+|00011000| LSL   |   * * | 01000001 10000000 00000000 00000000 10100000 | LSL v0 v1
+|00011001| LCL   |   * * | 01000001 10001000 00000000 00000000 10100000 | LCL v0 v1
+|00011010| LSR   |   * * | 01000001 10000100 00000000 00000000 10100000 | LSR v0 v1
+|00011011| LCR   |   * * | 01000001 10001100 00000000 00000000 10100000 | LCR v0 v1
+|00011100| ASR   |   * * | 01000001 10011100 00000000 00000000 10100000 | ASR v0 v1
+|00011101| ABR   |  ** * | 01000001 11001100 00000100 01000101 01010100 | ABR v0 5ds
+|00011110| LBL   |  ** * | 01000001 11000000 00000100 01000101 01010100 | LBL v0 5ds
+|00011111| LBR   |  ** * | 01000001 11000100 00000100 01000101 01010100 | LBR v0 5ds
+|________|_______|_______|______________________________________________|
+|00100000| MLDr  |  * ** | 01000100 00000000 00000000 00010010 10100000 | LD v0 v1
+|00100001| -MLDr |  * ** | 11000100 00000000 00000010 01001010 10100000 | LD v0 -v1
+|00100010| MLDr+ |  * ** | 11100100 00000000 00000010 01000010 10100000 | LD v0 v1+
+|00100011| +MLDr |  * ** | 11000100 00000000 00000010 01000010 10100000 | LD v0 -v1
+|00100100| MSTr  |  * *  | 00001000 00000000 00000000 00010010 11110000 | ST v0 v1
+|00100101| -MSTr |  * *  | 10001000 00000000 00000010 01001010 11110000 | ST v0 -v1
+|00100110| MSTr+ |  * *  | 10101000 00000000 00000010 01000010 11110000 | ST v0 v1+
+|00100111| +MSTr |  * *  | 10001000 00000000 00000010 01000010 11110000 | ST v0 -v1
+|00101000| MLDi  | ** ** | 01000100 00000000 00000000 00010000 10101000 | LD v0  v1#:xx / LD v0  v1#42069dx / LD v0 :xx / LD v0 42069dx
+|00101001| -MLDi | ** ** | 11000100 00000000 00000010 01001000 10101000 | LD v0 -v1#:xx / LD v0 -v1#42069dx
+|00101010| MLDi+ | ** ** | 11100100 00000000 00000010 01000000 10101000 | LD v0 v1+#:xx / LD v0 v1+#42069dx
+|00101011| +MLDi | ** ** | 11000100 00000000 00000010 01000000 10101000 | LD v0 +v1#:xx / LD v0 +v1#42069dx
+|00101100| MSTi  | ** *  | 00001000 00000000 00000000 00010000 11111000 | ST v0  v1#:xx / ST v0  v1#42069dx / ST v0 :xx / ST v0 42069dx
+|00101101| -MSTi | ** *  | 10001000 00000000 00000010 01001000 11111000 | ST v0 -v1#:xx / ST v0 -v1#42069dx
+|00101110| MSTi+ | ** *  | 10101000 00000000 00000010 01000000 11111000 | ST v0 v1+#:xx / ST v0 v1+#42069dx
+|00101111| +MSTi | ** *  | 10001000 00000000 00000010 01000000 11111000 | ST v0 +v1#:xx / ST v0 +v1#42069dx
+|________|_______|_______|______________________________________________|
+|0011****| MLDf  | ** ** | 01000100 00000000 00000000 00010001 10100110 | LD v0 fp+255dl
+|________|_______|_______|______________________________________________|
+|0100****| MSTf  | ** *  | 00001000 00000000 00000000 00010001 10100110 | ST v0 fp+255dl
+|________|_______|_______|______________________________________________|
+|0101****| INP   | ** ** | 01010100 00000000 00000000 00000101 00000100 | INP v0 %port / INP v0 255dl
+|________|_______|_______|______________________________________________|
+|0110****| OUT   | ** *  | 00011000 00000000 00000000 00000101 00010100 | OUT v0 %port / OUT v0 255dl
+|________|_______|_______|______________________________________________|
+|0111****| LSI   | **  * | 01000000 00000000 00000000 11000101 00000100 | IMM v0 255dl
+|________|_______|_______|______________________________________________|
+|10000***| MVC   |  *  * | 01000000 00000000 1***0111 10000000 00100000 | MOV v0 v1 cr
+|10001***| MVP   |  *  * | 01000000 00000000 0***0111 10000000 00110000 | MOV v0:zer v1
+|________|_______|_______|______________________________________________|
+|10010***| BRCr  |  *    | 00000000 00000010 1***0000 00010010 00100000 | B v0 cr
+|10011***| BRPr  |  *    | 00000000 00000010 0***0000 00010010 00110000 | B v0 v1:zer
+|________|_______|_______|______________________________________________|
+|10100***| BRCi  | **    | 00000000 00000010 1***0000 00010000 00101000 | B v0+:xx cr / B v0+42069dx cr / B :xx cr / B 42069dx cr
+|10101***| BRPi  | **    | 00000000 00000010 0***0000 00010000 00111000 | B v0+:xx v1:zer / B v0+42069dx v1:zer / B :xx v1:zer / B 42069dx v1:zer
+|________|_______|_______|______________________________________________|
+|10110***| BRCo  |  *    | 00000000 00000010 1***0000 00011001 00000000 | B ip+255dl cr
+|10111000| MOV   |  *  * | 01000000 00000000 00000000 10000000 00100000 | MOV v0 v1
+|10111001| SWP   |  *  * | 11000000 00000000 00000000 10000000 00110000 | SWP v0 v1
+|10111010| SWB   |  *  * | 01000000 00000000 00000011 01010000 00100000 | SWB v0 v1
+|10111011| HLT   | *     | 00000000 00000000 00000000 00000000 00000011 | HLT
+|10111100| JNLr  |  *  * | 01000000 00000000 00000001 00010010 00100000 | JL v0
+|10111101| JNLi  | **  * | 01000000 00000000 00000001 00110000 00101000 | JL v0+:xx / JNL v0+42069dx / JNL :xx / JNL 42069dx
+|10111110| JNLo  | **  * | 01000000 00000000 00000001 00110001 00000001 | JL ip+255dl
+|10111111| JMPo  |  *    | 00000000 00000000 00000001 00011001 00000000 | JMP ip+255dl
+|________|_______|_______|______________________________________________|
+|11000***| RBCC  |  *    | 00000000 00000000 1***0100 00000000 00000000 | RBC 0ds cr
+|11001***| RBCP  |  *    | 00000000 00000000 0***1100 00000000 00010000 | RBC 0ds v0:zer
+|________|_______|_______|______________________________________________|
+|11010***| RBDC  |  *    | 00000000 00000000 1***1100 01000000 00000000 | RBD 0ds cr
+|11011***| RBDP  |  *    | 00000000 00000000 0***1100 01000000 00010000 | RBD 0ds v0:zer
+|________|_______|_______|______________________________________________|
+|11100000| RBM   |  *    | 00000000 00000000 00001101 10000000 00000000 | RBM 0ds 15ds
+|11100001| RBN   |  *    | 00000000 00000000 00001101 11000000 00000000 | RBN 0ds 15ds
+|11100010| RBC   |  *    | 00000000 00000000 00001101 00000000 00000000 | RBC 0ds 15ds
+|11100011| RBD   |  *    | 00000000 00000000 00001101 01000000 00000000 | RBD 0ds 15ds
+|11100100| LRFr  |  *    | 00000000 00000000 00001101 00000000 00100000 | MOV rf v0
+|11100101| LRFi  | **    | 00000000 00000000 00001111 00000000 00001000 | MOV rf 42069dx
+|11100110| SRF   |  *  * | 01000000 00000000 00001000 00000000 00000000 | MOV v0 rf
+|11100111| RXT   |  *    | 00000000 00000011 00000000 00000000 00000000 | BXT rf 15ds
+|11101000| --    |       |                                              |
+|11101001| --    |       |                                              |
+|11101010| --    |       |                                              |
+|11101011| --    |       |                                              |
+|11101100| --    |       |                                              |
+|11101101| --    |       |                                              |
+|11101110| --    |       |                                              |
+|11101111| --    |       |                                              |
+|________|_______|_______|______________________________________________|
+|11110000| --    |       |                                              |
+|11110001| --    |       |                                              |
+|11110010| --    |       |                                              |
+|11110011| --    |       |                                              |
+|11110100| --    |       |                                              |
+|11110101| --    |       |                                              |
+|11110110| --    |       |                                              |
+|11110111| --    |       |                                              |
+|11111000| --    |       |                                              |
+|11111001| --    |       |                                              |
+|11111010| --    |       |                                              |
+|11111011| --    |       |                                              |
+|11111100| --    |       |                                              |
+|11111101| --    |       |                                              |
+|11111110| --    |       |                                              |
+|11111111| NOP   |       | 00000000 00000000 00000000 00000000 00000000 | NOP
+|________|_______|_______|______________________________________________|
+
+----------------------------------------------------------------------------------------------------

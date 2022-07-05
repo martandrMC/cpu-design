@@ -1,0 +1,20 @@
+add a0 zr 65535
+add a1 zr 5
+imm v0 16
+nul a2
+loop:
+lcl a0 a0
+lcl a2 a2
+mov v1 a2
+sub a2 a1
+mov a2 v1 nc
+dec v0 v0
+br loop v0.nzr
+lcl a0 a0
+out a0 0xFF
+out a2 0xFF
+nop
+nop
+nop
+nop
+hlt

@@ -1,0 +1,128 @@
+#once
+; TEMP: v0 v1 v2
+; RTRN: a0 a1
+;----------
+; Reads 4 hex characters from the console with echo. (Blocking)
+; Returns the value in a0 or a non-zero value in a1 if error.
+get_hex_word_echo:
+	nul a0
+	imm a1 4
+	.loop:
+		inp v0 0xFE
+		inc v0 v0
+		br .loop v0.zer
+		dec v0 v0
+		swb v1 v0
+		and v1 v1 0x00DF
+		mov v2 v1
+		lbr v2 4
+		sub zr v2 4
+		br .atof zr
+		sub zr v2 1
+		br .digit zr
+		.error:
+		and v0 v0 0xFF3F
+		out v0 0xFE
+		jmp rp
+		.atof:
+		sub v1 v1 7
+		and v1 v1 0x00CF
+		mov v2 v1
+		lbr v2 4
+		br .error v2.nzr
+		sub v2 v1 9
+		br .error v2.zer
+		.digit:
+		and v1 v1 0x000F
+		lbl a0 4
+		nop					; FORWARDING PROBLEM HERE
+		ior a0 v1
+		out v0 0xFE
+		out zr 0xFE
+	dec a1 a1
+	br .loop a1.nzr
+jmp rp
+
+get_hex_byte_silent:
+	nul a0
+	imm a1 2
+	.loop:
+		inp v0 0xFE
+		inc v0 v0
+		br .loop v0.zer
+		dec v0 v0
+		swb v1 v0
+		and v1 v1 0x00DF
+		mov v2 v1
+		lbr v2 4
+		sub zr v2 4
+		br .atof zr
+		sub zr v2 1
+		br .digit zr
+		jmp rp
+		.atof:
+		sub v1 v1 7
+		and v1 v1 0x00CF
+		mov v2 v1
+		lbr v2 4
+		br rp v2.nzr
+		sub v2 v1 9
+		br rp v2.zer
+		.digit:
+		and v1 v1 0x000F
+		lbl a0 4
+		nop					; FORWARDING PROBLEM HERE
+		ior a0 v1
+	dec a1 a1
+	br .loop a1.nzr
+jmp rp
+
+; TEMP: v0 v1 v2 v3
+; ARGS: a0*
+;----------
+; Prints the number in a0 to the console in hex
+put_hex_word:
+	imm v0 0xF
+	swb a0 a0
+	
+	; Get digit 3
+	mov v2 a0
+	lbr a0  4
+	and v2 v0
+	add v3 v2 7
+	sub zr v2 10
+	mov v2 v3 ae
+	
+	; Get digit 4
+	mov v1 a0
+	lbr a0  4
+	and v1 v0
+	add v3 v1 7
+	sub zr v1 10
+	mov v1 v3 ae
+	
+	; Send high byte
+	swb v1 v1
+	ior v1 v2
+	add v1 v1 0x3030
+	out v1 0xFE
+	
+	; Get digit 1
+	mov v2 a0
+	lbr a0  4
+	and v2 v0
+	add v3 v2 7
+	sub zr v2 10
+	mov v2 v3 ae
+	
+	;Get digit 2
+	add v3 a0 7
+	sub zr a0 10
+	mov a0 v3 ae
+	
+	; Send low byte
+	swb a0 a0
+	ior a0 v2
+	add a0 a0 0x3030
+	out a0 0xFE
+jmp rp

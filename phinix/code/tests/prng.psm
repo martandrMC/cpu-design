@@ -1,0 +1,19 @@
+imm a0 0xFF
+loop:
+out a0 0xFF
+jl rp prng
+jmp loop
+
+prng:
+	and v0 a0 0xB400
+	nul v2
+	.loop:
+	br .skip v0.zer
+	dec v1 v0
+	and v0 v1
+	inc v2 v2
+	jmp .loop
+	.skip:
+	lsr v2 v2
+	lcl a0 a0
+	jmp rp

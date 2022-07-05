@@ -1,0 +1,103 @@
+print_decimal:
+	psh s0
+	nop				; FORWARDING PROBLEM HERE
+	nop				; FORWARDING PROBLEM HERE
+	psh s1
+	nop				; FORWARDING PROBLEM HERE
+	nop				; FORWARDING PROBLEM HERE
+	psh s2
+	
+	nul s0
+	nul s1
+	nul s2
+	add v0 zr add_arr-3
+	.loop_start:
+	br  .loop_exit a0.zer
+		imm v1  3
+		add v0 v1
+		lsr a0 a0
+		br  .loop_start nc
+		ld  v2 v0+
+		add s0 v2
+		ld  v2 v0+
+		add s1 v2
+		ld  v2 v0+
+		add s2 v2
+		nop			; FORWARDING PROBLEM HERE
+		sub v0 v1
+		
+		nul v3
+		imm v1 10
+		and v3 s0 0x00ff
+		and s0 s0 0xff00
+		swb s0 s0
+		cmp v3 v1
+		br .skip1 bl
+		sub v3 v1
+		inc s0 s0
+		.skip1:
+		cmp s0 v1
+		br .skip2 bl
+		sub s0 v1
+		inc s1 s1
+		.skip2:
+		swb s0 s0
+		ior s0 v3
+		
+		and v3 s1 0x00ff
+		and s1 s1 0xff00
+		swb s1 s1
+		cmp v3 v1
+		br .skip3 bl
+		sub v3 v1
+		inc s1 s1
+		.skip3:
+		cmp s1 v1
+		br .skip4 bl
+		sub s1 v1
+		inc s2 s2
+		.skip4:
+		swb s1 s1
+		ior s1 v3
+	jmp .loop_start
+	.loop_exit:
+	add v1 zr 0x3030
+	add v0 zr 0x0d0a
+	add s0 v1
+	add s1 v1
+	add s2 v1
+	swb s2 s2
+	out s2 0xFE
+	out zr 0xFE
+	out s1 0xFE
+	nop
+	out s0 0xFE
+	nop
+	out v0 0xFE
+	
+	pop s2
+	nop				; FORWARDING PROBLEM HERE
+	nop				; FORWARDING PROBLEM HERE
+	pop s1
+	nop				; FORWARDING PROBLEM HERE
+	nop				; FORWARDING PROBLEM HERE
+	pop s0
+	jmp rp
+
+add_arr:
+	#d16 0x0001, 0x0000, 0x0000
+	#d16 0x0002, 0x0000, 0x0000
+	#d16 0x0004, 0x0000, 0x0000
+	#d16 0x0008, 0x0000, 0x0000
+	#d16 0x0106, 0x0000, 0x0000
+	#d16 0x0302, 0x0000, 0x0000
+	#d16 0x0604, 0x0000, 0x0000
+	#d16 0x0208, 0x0001, 0x0000
+	#d16 0x0506, 0x0002, 0x0000
+	#d16 0x0102, 0x0005, 0x0000
+	#d16 0x0204, 0x0100, 0x0000
+	#d16 0x0408, 0x0200, 0x0000
+	#d16 0x0906, 0x0400, 0x0000
+	#d16 0x0902, 0x0801, 0x0000
+	#d16 0x0804, 0x0603, 0x0001
+	#d16 0x0608, 0x0207, 0x0003

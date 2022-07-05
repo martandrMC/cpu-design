@@ -1,0 +1,183 @@
+#bits 16
+#subruledef reg {
+	zr => 0x0
+	rp => 0x1
+	v0 => 0x2
+	v1 => 0x3
+	v2 => 0x4
+	v3 => 0x5
+	a0 => 0x6
+	a1 => 0x7
+	a2 => 0x8
+	s0 => 0x9
+	s1 => 0xA
+	s2 => 0xB
+	s3 => 0xC
+	s4 => 0xD
+	fp => 0xE
+	s5 => 0xE
+	sp => 0xF
+	s6 => 0xF
+}
+
+#subruledef cnd {
+	cr => 0x0
+	ae => 0x0
+	ov => 0x1
+	zr => 0x2
+	eq => 0x2
+	nz => 0x3
+	nq => 0x3
+	nc => 0x4
+	bl => 0x4
+	be => 0x5
+	lt => 0x6
+	le => 0x7
+}
+
+#subruledef prp {
+	zer => 0x0
+	ref => 0x1
+	neg => 0x2
+	odd => 0x3
+	nzr => 0x4
+	nrf => 0x5
+	pos => 0x6
+	evn => 0x7
+}
+
+#ruledef native {
+	add {dst: reg} {src: reg} => 0x00 @ src`4 @ dst`4
+	adc {dst: reg} {src: reg} => 0x01 @ src`4 @ dst`4
+	sub {dst: reg} {src: reg} => 0x02 @ src`4 @ dst`4
+	sbc {dst: reg} {src: reg} => 0x03 @ src`4 @ dst`4
+	add {dst: reg} {src: reg} {imm: i16} => 0x04 @ src`4 @ dst`4 @ imm`16
+	inc {dst: reg} {src: reg} => 0x05 @ src`4 @ dst`4
+	sub {dst: reg} {src: reg} {imm: i16} => 0x06 @ src`4 @ dst`4 @ imm`16
+	dec {dst: reg} {src: reg} => 0x07 @ src`4 @ dst`4
+	mul {dst: reg} {src: reg} => 0x08 @ src`4 @ dst`4
+	mul {dst: reg} {src: reg} {imm: i16} => 0x09 @ src`4 @ dst`4 @ imm`16
+	uml {dst: reg} {src: reg} => 0x0A @ src`4 @ dst`4
+	sml {dst: reg} {src: reg} => 0x0B @ src`4 @ dst`4
+	cmp {dst: reg} {src: reg} => 0x0C @ src`4 @ dst`4
+	cmp {src: reg} {imm: i16} => 0x0D @ src`4 @ 0`4 @ imm`16
+	neg {dst: reg} {src: reg} => 0x0E @ src`4 @ dst`4
+	bxt {dst: reg} {imm: u4} => 0x0F @ imm`4 @ dst`4
+	
+	and {dst: reg} {src: reg} => 0x10 @ src`4 @ dst`4
+	ior {dst: reg} {src: reg} => 0x11 @ src`4 @ dst`4
+	nor {dst: reg} {src: reg} => 0x12 @ src`4 @ dst`4
+	xor {dst: reg} {src: reg} => 0x13 @ src`4 @ dst`4
+	and {dst: reg} {src: reg} {imm: i16} => 0x14 @ src`4 @ dst`4 @ imm`16
+	ior {dst: reg} {src: reg} {imm: i16} => 0x15 @ src`4 @ dst`4 @ imm`16
+	nor {dst: reg} {src: reg} {imm: i16} => 0x16 @ src`4 @ dst`4 @ imm`16
+	xor {dst: reg} {src: reg} {imm: i16} => 0x17 @ src`4 @ dst`4 @ imm`16
+	lsl {dst: reg} {src: reg} => 0x18 @ src`4 @ dst`4
+	lcl {dst: reg} {src: reg} => 0x19 @ src`4 @ dst`4
+	lsr {dst: reg} {src: reg} => 0x1A @ src`4 @ dst`4
+	lcr {dst: reg} {src: reg} => 0x1B @ src`4 @ dst`4
+	asr {dst: reg} {src: reg} => 0x1C @ src`4 @ dst`4
+	abr {dst: reg} {imm: u4} => 0x1D @ imm`4 @ dst`4
+	lbl {dst: reg} {imm: u4} => 0x1E @ imm`4 @ dst`4
+	lbr {dst: reg} {imm: u4} => 0x1F @ imm`4 @ dst`4
+	
+	ld {dst: reg} {src: reg} => 0x20 @ src`4 @ dst`4
+	ld {dst: reg} -{src: reg} => 0x21 @ src`4 @ dst`4
+	ld {dst: reg} {src: reg}+ => 0x22 @ src`4 @ dst`4
+	ld {dst: reg} +{src: reg} => 0x23 @ src`4 @ dst`4
+	st {dst: reg} {src: reg} => 0x24 @ src`4 @ dst`4
+	st {dst: reg} -{src: reg} => 0x25 @ src`4 @ dst`4
+	st {dst: reg} {src: reg}+ => 0x26 @ src`4 @ dst`4
+	st {dst: reg} +{src: reg} => 0x27 @ src`4 @ dst`4
+	ld {dst: reg} {src: reg} {imm: i16} => 0x28 @ src`4 @ dst`4 @ imm`16
+	ld {dst: reg} -{src: reg} {imm: i16} => 0x29 @ src`4 @ dst`4 @ imm`16
+	ld {dst: reg} {src: reg}+ {imm: i16} => 0x2A @ src`4 @ dst`4 @ imm`16
+	ld {dst: reg} +{src: reg} {imm: i16} => 0x2B @ src`4 @ dst`4 @ imm`16
+	st {dst: reg} {src: reg} {imm: i16} => 0x2C @ src`4 @ dst`4 @ imm`16
+	st {dst: reg} -{src: reg} {imm: i16} => 0x2D @ src`4 @ dst`4 @ imm`16
+	st {dst: reg} {src: reg}+ {imm: i16} => 0x2E @ src`4 @ dst`4 @ imm`16
+	st {dst: reg} +{src: reg} {imm: i16} => 0x2F @ src`4 @ dst`4 @ imm`16
+	
+	ld {dst: reg} fp {imm: i8} => 0x3 @ imm`8 @ dst`4
+	st {dst: reg} fp {imm: i8} => 0x4 @ imm`8 @ dst`4
+	inp {dst: reg} {imm: i8} => 0x5 @ imm`8 @ dst`4
+	out {dst: reg} {imm: i8} => 0x6 @ imm`8 @ dst`4
+	imm {dst: reg} {imm: i8} => 0x7 @ imm`8 @ dst`4
+	
+	mov {dst: reg} {src: reg} {cond: cnd} => 0x8 @ 0`1 @ cond`3 @ src`4 @ dst`4
+	mov {dst: reg}.{prop: prp} {src: reg} => 0x8 @ 1`1 @ prop`3 @ src`4 @ dst`4
+	
+	br {src: reg} {cond: cnd} => 0x9 @ 0`1 @ cond`3 @ src`4 @ 0`4
+	br {src: reg} {dst: reg}.{prop: prp} => 0x9 @ 1`1 @ prop`3 @ src`4 @ dst`4
+	
+	br {src: reg} {imm: i16} {cond: cnd} => 0xA @ 0`1 @ cond`3 @ src`4 @ 0`4 @ imm`16
+	br {src: reg} {imm: i16} {dst: reg}.{prop: prp} => 0xA @ 1`1 @ prop`3 @ src`4 @ dst`4 @ imm`16
+	
+	br ip {imm: i8} {cond: cnd} => 0xB @ 0`1 @ cond`3 @ imm`8
+	mov {dst: reg} {src: reg} => 0xB8 @ src`4 @ dst`4
+	swp {dst: reg} {src: reg} => 0xB9 @ src`4 @ dst`4
+	swb {dst: reg} {src: reg} => 0xBA @ src`4 @ dst`4
+	hlt => 0xBB @ 0`4 @ 0`4
+	jl {dst: reg} {src: reg} => 0xBC @ src`4 @ dst`4
+	jl {dst: reg} {src: reg} {imm: i16} => 0xBD @ src`4 @ dst`4 @ imm`16
+	jl ip {imm: i8} => 0xBE @ imm`8
+	jmp ip {imm: i8} => 0xBF @ imm`8
+	
+	rbc {imm: u4} {cond: cnd} => 0xC @ 0`1 @ cond`3 @ imm`4 @ 0`4
+	rbc {imm: u4} {dst: reg}.{prop: prp} => 0xC @ 1`1 @ prop`3 @ imm`4 @ dst`4
+	
+	rbd {imm: u4} {cond: cnd} => 0xD @ 0`1 @ cond`3 @ imm`4 @ 0`4
+	rbd {imm: u4} {dst: reg}.{prop: prp} => 0xD @ 1`1 @ prop`3 @ imm`4 @ dst`4
+	
+	rbm {imm1: u4} {imm2: u4} => 0xE0 @ imm1`4 @ imm2`4
+	rbn {imm1: u4} {imm2: u4} => 0xE1 @ imm1`4 @ imm2`4
+	rbc {imm1: u4} {imm2: u4} => 0xE2 @ imm1`4 @ imm2`4
+	rbd {imm1: u4} {imm2: u4} => 0xE3 @ imm1`4 @ imm2`4
+	mov rf {src: reg} => 0xE4 @ src`4 @ 0`4
+	mov rf {imm: i16} => 0xE5 @ 0`4 @ 0`4 @ imm`16
+	mov {dst: reg} rf => 0xE6 @ 0`4 @ dst`4
+	bxt rf {imm: u4} => 0xE7 @ imm`4 @ 0`4
+	; 0xE8
+	; 0xE9
+	; 0xEA
+	; 0xEB
+	; 0xEC
+	; 0xED
+	; 0xEE
+	; 0xEF
+	
+	; 0xF0
+	; 0xF1
+	; 0xF2
+	; 0xF3
+	; 0xF4
+	; 0xF5
+	; 0xF6
+	; 0xF7
+	; 0xF8
+	; 0xF9
+	; 0xFA
+	; 0xFB
+	; 0xFC
+	; 0xFD
+	; 0xFE
+	nop => 0xFF @ 0`4 @ 0`4
+}
+
+#ruledef pseudo {
+	ld {dst: reg} {imm: i16} => 0x28 @ 0`4 @ dst`4 @ imm`16
+	st {dst: reg} {imm: i16} => 0x2C @ 0`4 @ dst`4 @ imm`16
+	
+	br {imm: i16} {cond: cnd} => 0xA @ 0`1 @ cond`3 @ 0`4 @ 0`4 @ imm`16
+	br {imm: i16} {dst: reg}.{prop: prp} => 0xA @ 1`1 @ prop`3 @ 0`4 @ dst`4 @ imm`16
+	
+	jl {dst: reg} {imm: i16} => 0xBD @ 0`4 @ dst`4 @ imm`16
+	
+	jmp {src: reg} => 0x98 @ src`4 @ 0`4
+	jmp {src: reg} {imm: i16} => 0xA8 @ src`4 @ 0`4 @ imm`16
+	jmp {imm: i16} => 0xA8 @ 0`4 @ 0`4 @ imm`16
+	
+	nul {dst: reg} => 0x7 @ 0`8 @ dst`4
+	psh {dst: reg} => 0x25 @ 0xF`4 @ dst`4
+	pop {dst: reg} => 0x22 @ 0xF`4 @ dst`4
+}

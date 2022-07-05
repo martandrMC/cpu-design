@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg version="1.1">
+  <rect stroke="black" stroke-width="4" fill="#ffffb4" fill-opacity="1" x="0" y="0" width="120" height="220"/>
+  <!-- TOP SIDE -->
+  <g>
+    <circle fill="#0000b2" id="pin:Φ" cx="40" cy="0" r="3"/>
+    <text fill="#808080" font-size="16" text-anchor="middle" x="40" y="20">Φ</text>
+  </g>
+  <g>
+    <circle fill="#0000b2" id="pin:H" cx="60" cy="0" r="3"/>
+    <text fill="#808080" font-size="16" text-anchor="middle" x="60" y="20">H</text>
+  </g>
+  <!-- BOTTOM SIDE -->
+  <g>
+    <circle fill="#0000b2" id="pin:#Σ" cx="20" cy="220" r="3"/>
+    <text fill="#808080" font-size="16" text-anchor="middle" x="20" y="212">#Σ</text>
+  </g>
+  <g>
+    <circle fill="#0000b2" id="pin:#W" cx="40" cy="220" r="3"/>
+    <text fill="#808080" font-size="16" text-anchor="middle" x="40" y="212">#W</text>
+  </g>
+  <g>
+    <circle fill="#0000b2" id="pin:#Π" cx="60" cy="220" r="3"/>
+    <text fill="#808080" font-size="16" text-anchor="middle" x="60" y="212">#Π</text>
+  </g>
+  <!-- LEFT SIDE -->
+  <g>
+    <circle fill="#0000b2" id="pin:PM_i" cx="0" cy="20" r="3"/>
+    <text fill="#808080" font-size="16" x="4" y="26">PM_i</text>
+  </g>
+  <g>
+    <circle fill="#0000b2" id="pin:PM_a" cx="0" cy="40" r="3"/>
+    <text fill="#808080" font-size="16" x="4" y="46">PM_a</text>
+  </g>
+  <g>
+    <circle fill="#0000b2" id="pin:#R_0123" cx="0" cy="80" r="3"/>
+    <text fill="#808080" font-size="16" x="4" y="86">#R_0123</text>
+  </g>
+  <g>
+    <circle fill="#0000b2" id="pin:#R_4567" cx="0" cy="100" r="3"/>
+    <text fill="#808080" font-size="16" x="4" y="106">#R_4567</text>
+  </g>
+  <g>
+    <circle fill="#0000b2" id="pin:#R_89AB" cx="0" cy="120" r="3"/>
+    <text fill="#808080" font-size="16" x="4" y="126">#R_89AB</text>
+  </g>
+  <g>
+    <circle fill="#0000b2" id="pin:#R_CDEF" cx="0" cy="140" r="3"/>
+    <text fill="#808080" font-size="16" x="4" y="146">#R_CDEF</text>
+  </g>
+  <g>
+    <circle fill="#0000b2" id="pin:#RF" cx="0" cy="160" r="3"/>
+    <text fill="#808080" font-size="16" x="4" y="166">#RF</text>
+  </g>
+  <g>
+    <circle fill="#0000b2" id="pin:#ST" cx="0" cy="180" r="3"/>
+    <text fill="#808080" font-size="16" x="4" y="186">#ST</text>
+  </g>
+  <!-- RIGHT SIDE -->
+  <g>
+    <circle fill="#b20000" id="pin:DM_i" cx="120" cy="20" r="3"/>
+    <text fill="#808080" font-size="16" text-anchor="end" x="116" y="26">DM_i</text>
+  </g>
+  <g>
+    <circle fill="#b20000" id="pin:DM_o" cx="120" cy="40" r="3"/>
+    <text fill="#808080" font-size="16" text-anchor="end" x="116" y="46">DM_o</text>
+  </g>
+  <g>
+    <circle fill="#b20000" id="pin:DM_a" cx="120" cy="60" r="3"/>
+    <text fill="#808080" font-size="16" text-anchor="end" x="116" y="66">DM_a</text>
+  </g>
+  <g>
+    <circle fill="#b20000" id="pin:DM_w" cx="120" cy="80" r="3"/>
+    <text fill="#808080" font-size="16" text-anchor="end" x="116" y="86">DM_w</text>
+  </g>
+    <g>
+    <circle fill="#b20000" id="pin:IO_i" cx="120" cy="120" r="3"/>
+    <text fill="#808080" font-size="16" text-anchor="end" x="116" y="126">IO_i</text>
+  </g>
+  <g>
+    <circle fill="#b20000" id="pin:IO_o" cx="120" cy="140" r="3"/>
+    <text fill="#808080" font-size="16" text-anchor="end" x="116" y="146">IO_o</text>
+  </g>
+  <g>
+    <circle fill="#b20000" id="pin:IO_a" cx="120" cy="160" r="3"/>
+    <text fill="#808080" font-size="16" text-anchor="end" x="116" y="166">IO_a</text>
+  </g>
+  <g>
+    <circle fill="#b20000" id="pin:IO_w" cx="120" cy="180" r="3"/>
+    <text fill="#808080" font-size="16" text-anchor="end" x="116" y="186">IO_w</text>
+  </g>
+  <g>
+    <circle fill="#b20000" id="pin:IO_r" cx="120" cy="200" r="3"/>
+    <text fill="#808080" font-size="16" text-anchor="end" x="116" y="206">IO_r</text>
+  </g>
+</svg>

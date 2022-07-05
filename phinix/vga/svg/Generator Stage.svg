@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg version="1.1">
+  <rect stroke="black" stroke-width="4" fill="#ffffb4" fill-opacity="1" x="0" y="0" width="100" height="80"/>
+  <text fill="#808080" font-size="20" text-anchor="middle" x="50" y="48">GEN</text>
+  <!-- TOP SIDE -->
+  <g>
+    <circle fill="#0000b2" id="pin:Φ_PX" cx="40" cy="0" r="3"/>
+    <text fill="#808080" font-size="16" text-anchor="middle" x="40" y="20">Φ_PX</text>
+  </g>
+  <!-- LEFT SIDE -->
+  <g>
+    <circle fill="#0000b2" id="pin:C_2" cx="0" cy="40" r="3"/>
+    <text fill="#808080" font-size="16" x="4" y="46">C_2</text>
+  </g>
+  <g>
+    <circle fill="#0000b2" id="pin:C_3" cx="0" cy="60" r="3"/>
+    <text fill="#808080" font-size="16" x="4" y="66">C_3</text>
+  </g>
+  <!-- RIGHT SIDE -->
+  <g>
+    <circle fill="#b20000" id="pin:S" cx="100" cy="20" r="3"/>
+    <text fill="#808080" font-size="16" text-anchor="end" x="96" y="26">S</text>
+  </g>
+  <g>
+    <circle fill="#b20000" id="pin:P_X" cx="100" cy="40" r="3"/>
+    <text fill="#808080" font-size="16" text-anchor="end" x="96" y="46">P_X</text>
+  </g>
+  <g>
+    <circle fill="#b20000" id="pin:P_Y" cx="100" cy="60" r="3"/>
+    <text fill="#808080" font-size="16" text-anchor="end" x="96" y="66">P_Y</text>
+  </g>
+</svg>

@@ -1,0 +1,34 @@
+add s0 zr 27
+add s2 zr 0x0d0a
+nul s3
+
+collatz:
+	mov a0 s0
+	jl rp print_num
+	out s2 telnet
+	inc s3 s3
+	br even s0.evn
+	sub zr s0 1
+	br one zr
+	jmp odd
+
+one:
+	out s2 telnet
+	mov a0 s3
+	jl rp print_num
+	out s2 telnet
+	.exit:
+	inp a0 telnet
+	inc a0 a0
+	br .exit a0.zer
+	jmp monitor
+
+odd:
+	lsl s1 s0
+	add s0 s1
+	inc s0 s0
+	jmp collatz
+	
+even:
+	lsr s0 s0
+	jmp collatz

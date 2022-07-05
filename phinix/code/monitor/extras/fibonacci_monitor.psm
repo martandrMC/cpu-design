@@ -1,0 +1,19 @@
+fibonacci:
+	nul s0
+	nul s2
+	imm s1 1
+	loop:
+	add s2 s0
+	br .exit cr
+	mov s0 s1
+	mov s1 s2
+	mov a0 s2
+	jl rp print_num
+	add a0 zr 0x0d0a
+	out a0 telnet
+	jmp loop
+	.exit:
+	inp a0 telnet
+	inc a0 a0
+	br .exit a0.zer
+	jmp monitor

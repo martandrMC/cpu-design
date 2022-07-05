@@ -1,0 +1,9 @@
+v1.0
+- Initial version
+- Added r (read) command
+- Added w (write) command
+- Added j (jump) command
+
+v1.1
+- Added d (dump) command
+- Changed project folder structure

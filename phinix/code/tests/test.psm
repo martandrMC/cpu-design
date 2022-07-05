@@ -1,0 +1,76 @@
+telnet = 0xFE
+jmp 0xFFFF
+jl rp get_num
+nop
+nop
+nop
+nop
+hlt
+
+; TEMP: v0 v1 v2
+; RTRN: a0 a1
+;----------
+; Reads 4 hex characters from the console (Blocking)
+; Returns the value in a0 or a non-zero value in a1 if error
+get_num:
+	nul a0
+	imm a1 4
+	.loop:
+		inp v0 0xFE
+		inc v0 v0
+		br .loop v0.zer
+		dec v0 v0
+		swb v1 v0
+		and v1 v1 0x00DF
+		mov v2 v1
+		lbr v2 4
+		sub zr v2 4
+		br .atof zr
+		sub zr v2 1
+		br .digit zr
+		.error:
+		and v0 v0 0xFF3F
+		out v0 0xFE
+		jmp rp
+		.atof:
+		sub v1 v1 7
+		and v1 v1 0x00CF
+		mov v2 v1
+		lbr v2 4
+		br .error v2.nzr
+		sub v2 v1 9
+		br .error v2.zer
+		.digit:
+		and v1 v1 0x000F
+		lbl a0 4
+		nop
+		ior a0 v1
+		.loop_end:
+		out v0 0xFE
+		out zr 0xFE
+	dec a1 a1
+	br .loop a1.nzr
+jmp rp
+
+new_read_command:
+	jl rp get_num
+	br .skip a1.nzr
+		.read_wait:
+		inp v0 telnet
+		inc v0 v0
+		br .read_wait v0.zer
+		dec v0 v0
+		swb v1 v0
+		lsr v1 v1
+		rbc 0 zr.nzr
+		rbd 0 cr
+		sub zr v1 0xFF1D
+		br .error nz
+		
+		.error:
+		and v1 v1 0xFF3F
+		out v1 telnet
+	.skip:
+	add v1 zr 0x0d0a
+	out v1 telnet
+jmp 0

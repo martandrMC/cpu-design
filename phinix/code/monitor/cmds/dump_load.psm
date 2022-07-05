@@ -1,0 +1,84 @@
+#once
+dump_command:
+	jl rp get_hex_word_echo
+	br .skip1 a1.nzr
+		mov s0 a0
+		add v1 zr 0x2000
+		out v1 telnet
+		out zr telnet
+	.skip1:
+	jl rp get_hex_word_echo
+	br .skip2 a1.nzr
+		mov s1 a0
+		add v1 zr 0x3A00
+		out v1 telnet
+		out zr telnet
+		add v1 zr 0x0d0a
+		out v1 telnet
+		
+		and v0 s0 0xFFF0
+		sub s0 v0
+		add s1 s0
+		mov s0 v0
+		dec s1 s1
+
+		.outer_loop:
+			mov a0 s0
+			jl rp put_hex_word
+			add v1 zr 0x3A20
+			out v1 telnet
+			
+			psh s0
+			imm s2 8
+			.inner_loop1:
+				ld a0 s0
+				jl rp put_hex_word
+				inc s0 s0
+				dec s1 s1
+				dec s2 s2
+				add v1 zr 0x2020
+				out v1 telnet
+				out zr telnet
+			br .inner_loop1 s2.nzr
+			pop s0
+			out v1 telnet
+			imm s2 8
+			.inner_loop2:
+				ld v0 s0
+
+				and zr v0 0x0060
+				bxt v0 7
+				br .dot1 zr
+				br .dot1 cr
+				jmp .dot1_skip
+				.dot1:
+					and v0 v0 0xFF00
+					ior v0 v0 0x002E
+				.dot1_skip:
+
+				and zr v0 0x6000
+				bxt v0 15
+				br .dot2 zr
+				br .dot2 cr
+				jmp .dot2_skip
+				.dot2:
+					and v0 v0 0x00FF
+					ior v0 v0 0x2E00
+				.dot2_skip:
+
+				out v0 telnet
+				inc s0 s0
+			dec s2 s2
+			br .inner_loop2 s2.nzr
+			add v1 zr 0x0d0a
+			out v1 telnet
+		br .outer_loop s1.pos
+		jmp cmd_loop
+	.skip2:
+	add v1 zr 0x0d0a
+	out v1 telnet
+jmp cmd_loop
+
+load_command:
+	jl rp get_hex_byte_silent
+jmp cmd_loop

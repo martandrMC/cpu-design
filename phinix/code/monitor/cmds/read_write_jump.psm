@@ -1,0 +1,36 @@
+#once
+read_command:
+	jl rp get_hex_word_echo
+	br .skip a1.nzr
+		add v1 zr 0x3A00
+		out v1 telnet
+		out zr telnet
+		ld  a0 a0
+		jl rp put_hex_word
+	.skip:
+	add v1 zr 0x0d0a
+	out v1 telnet
+jmp cmd_loop
+
+write_command:
+	jl rp get_hex_word_echo
+	br .skip a1.nzr
+		add v1 zr 0x3A00
+		out v1 telnet
+		out zr telnet
+		psh a0
+	jl rp get_hex_word_echo
+	br .skip a1.nzr
+		pop a1
+		st a0 a1
+	.skip:
+	add v1 zr 0x0d0a
+	out v1 telnet
+jmp cmd_loop
+
+jump_command:
+	jl rp get_hex_word_echo
+	add v1 zr 0x0d0a
+	out v1 telnet
+	br a0 a1.zer
+jmp cmd_loop

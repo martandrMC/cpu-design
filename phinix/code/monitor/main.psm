@@ -1,0 +1,69 @@
+telnet = 0xFE
+
+monitor:
+	; Print banner
+	add v0 zr banner
+		ld  v1 v0
+		inc v0 v0
+		br  .banner_exit v1.zer
+		out v1 telnet
+	jmp ip -5
+	.banner_exit:
+	
+	cmd_loop:
+		; Print cursor
+		add v1 zr 0x3E20
+		out v1 telnet
+		
+		; Wait for input
+		.wait:
+		inp v1 telnet
+		inc v1 v1
+		br .wait v1.zer
+		dec v1 v1
+		
+		; Search if command exists
+		add v0 zr commands
+		.loop:
+			ld  v2 v0
+			inc v0 v0
+			br .loop_exit v2.zer
+			cmp v2 v1
+			br ip 6 nq
+				and v1 v1 0xFF20
+				out v1 telnet
+				ld v2 v0
+				jmp v2
+			inc v0 v0
+		jmp .loop
+		.loop_exit:
+		
+		; Echo input char with ? then newline
+		and v1 v1 0xFF3F
+		out v1 telnet
+		add v1 zr 0x0d0a
+		out v1 telnet
+	jmp cmd_loop
+nop
+hlt
+
+#include "libs/hex_io.psm"
+#include "cmds/read_write_jump.psm"
+#include "cmds/dump_load.psm"
+
+banner:
+	#d "\x1b[2J"
+	#d "PHINIX Memory Monitor v1.1"
+	#d "\r\n\0\0"
+commands:
+	#d "r", 0xFF`8, read_command`16
+	#d "d", 0xFF`8, dump_command`16
+	#d "w", 0xFF`8, write_command`16
+	#d "l", 0xFF`8, load_command`16
+	#d "j", 0xFF`8, jump_command`16
+	#d 0x0000`16
+
+;#addr 0x0200
+;#include "extras/collatz_monitor.psm"
+;#addr 0x0300
+;#include "extras/fibonacci_monitor.psm"
