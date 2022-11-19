@@ -10,7 +10,7 @@ STR A, 15 ; Display current value
 SUB B, 1  ; Subtract 1 from A and save in B
 BRZ :end  ; If A was 1, finish
 MOV A, C  ; Move C to A
-ADD C, 1  ; Increment A
+ADD C, 1  ; Increment A and store back to C
 LOD A, 15 ; Restore A by reading from display
 LDI B, 1  ; Set B to 1
 AND B, B  ; Bitwise AND A with B
