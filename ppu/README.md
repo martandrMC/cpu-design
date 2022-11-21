@@ -78,7 +78,7 @@ OPC indicates an opcode group, IMM indicates an immediate value group, REG,DST a
 | 00 | LDR | DST = (B) | Load value from data memory at B to DST |
 | 01 | STR | (B) = SRC | Store SRC to data memory at B |
 | 10 | MOV | DST = SRC | Overwrite DST with the value of SRC |
-| 11 | LDP | DST = PC | Overwrite DST with the value of PC |
+| 11 | LDP | DST = PC+1 | Overwrite DST with the value of PC+1 |
 
 ### Auxiliary Instruction Table 2: Register Arithmetic
 
@@ -94,8 +94,8 @@ OPC indicates an opcode group, IMM indicates an immediate value group, REG,DST a
 | G2 | Mnemonic | Operation | Description |
 | :-: | :-: | :-: | :- |
 | 00 | AND | DST = A & SRC | Bitwise AND A and SRC and store to DST |
-| 01 | IOR | DST = A | SRC | Bitwise OR A and SRC and store to DST |
-| 10 | NOR | DST = ~(A | SRC) | Bitwise NOR A and SRC and store to DST |
+| 01 | IOR | DST = A \| SRC | Bitwise OR A and SRC and store to DST |
+| 10 | NOR | DST = ~(A \| SRC) | Bitwise NOR A and SRC and store to DST |
 | 11 | XOR | DST = A ^ SRC | Bitwise XOR A and SRC and store to DST |
 
 ### Auxiliary Instruction Table 4: Register Branching
