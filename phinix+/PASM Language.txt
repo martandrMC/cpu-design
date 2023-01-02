@@ -1,0 +1,51 @@
+=============================================Identifiers============================================
+
+Private Label: .label
+Local Label: .!label
+Segment: !seg
+Local Parameter: %param
+Global Parameter %!param
+Local Nametag: :name
+Global Nametag: :!name
+
+=============================================Directives=============================================
+
+// Data management
+@data :name array dec [ 1 2 3 4 5 ]
+@data :name string "lrrli larlom\r\n\0"
+@data :name reserve 100h
+@data multi :name
+	array dec [ 9 8 7 6 ]
+	string "aeiou\r\n0"
+	reserve 256d 45h
+	array hex [ 45 12 53 ]
+@data end
+
+// Code management
+@code :name
+@code end
+
+// Grouping
+@segment !seg_id
+@segment end
+
+// Parameterization
+@param %param set 42069dx
+@param %param equ !seg:nam# - 420d + %param
+
+// Static libs and multi-file management
+@relocate !seg F000hx
+
+@include "file.psmx" only !seg
+
+// Environment-specific settings
+@meta static_lib
+@meta entry !seg:main
+@meta ...
+
+=============================================Quantifiers============================================
+
+!seg#			<- Size of the segment
+(!seg):tag#		<- Size of the tagged block
+(!seg):tag$		<- Offset from start of segment
+.label$			<- Offset from start of code block
