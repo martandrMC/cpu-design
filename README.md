@@ -7,7 +7,7 @@ This repository contains all relevant info about (most) processor architectures 
 - MAPLU 1: [Puny Processing Unit](ppu)
 - MAPLU 2: [Smolproc](smolproc)
 - MAPLU 3: [PHINIX](phinix)
-- MAPLU 4: PHINIX+ (Planned)
+- MAPLU 4: [PHINIX+](phinix+)
 - MAPLU 5: Pipedream (Planned)
 
 ## A few words for each architecture
