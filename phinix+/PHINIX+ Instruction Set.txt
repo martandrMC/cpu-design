@@ -14,68 +14,44 @@
 	| Ul |[ OPC-4 |     IMM-8     | DST-4 ]=================================|
 	| N  |[     OPC-8     |     IMM-8     ]=================================|
 	|____|__________________________________________________________________|
-	_____________________________________
-	| Primary Register File             |
-	|___________________________________|
-	| x0 | $zr | Constant Zero | None   |
-	| x1 | $t0 | Temporary     | Caller | *1
-	| x2 | $t1 | Temporary     | Caller |
-	| x3 | $t2 | Temporary     | Caller |
-	| x4 | $t3 | Temporary     | Caller |
-	| x5 | $t4 | Temporary     | Caller |
-	| x6 | $a0 | Argument      | Caller | *2
-	| x7 | $a1 | Argument      | Caller |
-	| x8 | $a2 | Argument      | Caller |
-	| x9 | $a3 | Argument      | Caller |
-	| xA | $s0 | Saved Value   | Callee | *3
-	| xB | $s1 | Saved Value   | Callee |
-	| xC | $s2 | Saved Value   | Callee |
-	| xD | $s3 | Saved Value   | Callee |
-	| xE | $s4 | Saved Value   | Callee |
-	| xF | $s5 | Saved Value   | Callee |
-	|____|_____|_______________|________|
+	_____________________________________		____________________________________________
+	| Primary Register File             |		| Secondary Register File                  |
+	|___________________________________|		|__________________________________________|
+	| x0 | $zr | Constant Zero | None   |		| y0 | $a3 | Argument             | Caller |
+	| x1 | $at | Asm Temporary | Caller |		| y1 | $a4 | Argument             | Caller |
+	| x2 | $rp | Return Pointer| Caller |		| y2 | $a5 | Argument             | Caller |
+	| x3 | $t0 | Temporary     | Caller |		| y3 | $t3 | Temporary            | Caller |
+	| x4 | $t1 | Temporary     | Caller |		| y4 | $t4 | Temporary            | Caller |
+	| x5 | $t2 | Temporary     | Caller |		| y5 | $t5 | Temporary            | Caller |
+	| x6 | $a0 | Argument      | Caller |		| y6 | $t6 | Temporary            | Caller |
+	| x7 | $a1 | Argument      | Caller |		| y7 | $t7 | Temporary            | Caller |
+	| x8 | $a2 | Argument      | Caller |		| y8 | $s6 | Saved Pointer        | Callee |
+	| x9 | $s0 | Saved Value   | Callee |		| y9 | $s7 | Saved Pointer        | Callee |
+	| xA | $s1 | Saved Value   | Callee |		| yA | $gp | Global Pointer       | Callee |
+	| xB | $s2 | Saved Value   | Callee |		| yB | $sp | User Stack Pointer   | Callee |
+	| xC | $s3 | Saved Value   | Callee |		| yC | $k0 | System Register      | Callee | *1
+	| xD | $s4 | Saved Value   | Callee |		| yD | $k1 | System Register      | Callee | *1
+	| xE | $s5 | Saved Value   | Callee |		| yE | $k2 | System Register      | Callee | *1
+	| xF | $fp | Frame Pointer | Callee |		| yF | $kp | System Stack Pointer | Callee | *1
+	|____|_____|_______________|________|		|____|_____|______________________|________|
 	
-	*1	Use as assembler temporary, alias $at
-	*2	Use as return pointer, alias $rp
-	*3	Use as frame pointer, alias $fp
-	____________________________________________
-	| Secondary Register File                  |
-	|__________________________________________|
-	| y0 | $a4 | Argument             | Caller |
-	| y1 | $a5 | Argument             | Caller |
-	| y2 | $a6 | Argument             | Caller |
-	| y3 | $a7 | Argument             | Caller |
-	| y4 | $t5 | Temporary            | Caller |
-	| y5 | $t6 | Temporary            | Caller |
-	| y6 | $t7 | Temporary            | Caller |
-	| y7 | $t8 | Temporary            | Caller |
-	| y8 | $s6 | Saved Pointer        | Callee |
-	| y9 | $s7 | Saved Pointer        | Callee |
-	| yA | $gp | Global Pointer       | Callee |
-	| yB | $sp | User Stack Pointer   | Callee |
-	| yC | $k0 | System Register      | Callee | *4
-	| yD | $k1 | System Register      | Callee | *4
-	| yE | $k2 | System Register      | Callee | *4
-	| yF | $kp | System Stack Pointer | Callee | *4
-	|____|_____|______________________|________|
-	
-	*4	Access allowed only when privileged (Writes discarded/Reads return 0)
+	*1	Access allowed only when privileged
 	______________________________________
 	| Special Purpose Registers          |
 	|____________________________________|
-	| $st | Status Register     | Caller | *5
+	| $st | Status Register     | Caller | *2
 	| $rf | Condition Reference | Callee |
 	| $ip | Instruction Pointer | None   |
-	| $jp | Interrupt Saved $ip | None   | *6
+	| $jp | Interrupt Saved $ip | None   | *3
 	|_____|_____________________|________|
 	
-	*5	Bit layout as follows: [ NVCZ xxxx xxxx  GGGG ]
+	*2	Bit layout as follows: [ NVCZ xxxx xxxx  GGGG ]
 		G: General purpose signaling outputs
 			(G1 intended to signal syscall, G0 intended to signal halt)
 		NVZC: {Negative, Overflow, Zero, Carry} ALU flags
 		x: Unused
-	*6	Interrupt enter: [ $jp = $ip-2 ; $ip = 0 ]
-		Interrupt leave: [ $ip = $jp (LIP instruction) ]
+	*3	Interrupt enter: [ Save return to $jp ; Jump to ISR ]
+		Interrupt leave: [ Restore from $jp (LIP instruction) ]
 	___________________________________________________
 	| Conditions (Derived from flags)                 |
 	|_________________________________________________|
@@ -225,24 +201,25 @@
 
 =====================================Data Movement Instructions=====================================44
 
-	Bs | MOVxx | Move Primary to Primary               | xD = xS             |
-	Bs | MOVyx | Move Primary to Secondary             | yD = xS             |
-	Bs | MOVxy | Move Secondary to Primary             | xD = yS             |
-	Bs | MOVyy | Move Secondary to Secondary           | yD = yS             |
+	Bs | MOVxx | Move Primary to Primary               | xD = xS            |
+	Bs | MOVyx | Move Primary to Secondary             | yD = xS            |
+	Bs | MOVxy | Move Secondary to Primary             | xD = yS            |
+	Bs | MOVyy | Move Secondary to Secondary           | yD = yS            |
 	
-	Bs | LST   | Load Status Register from Register    | $st = xS            |
-	Bs | SST   | Store Status Register to Register     | xD = $st            |
-	Bs | LRF   | Load Reference Register from Register | $rf = xS            |
-	Bs | SRF   | Store Reference Register to Register  | xD = $rf            |
-	Bs | LJP   | Load $jp from Register                | $jp = xS            |
-	Bs | SJP   | Store $jp to Register                 | xD = $jp            |
+	Bs | LST   | Load Status Register from Register    | $st = xS           |
+	Bs | SST   | Store Status Register to Register     | xD = $st           |
+	Bs | LRF   | Load Reference Register from Register | $rf = xS           |
+	Bs | SRF   | Store Reference Register to Register  | xD = $rf           |
+	Bs | LJP   | Load $jp from Register                | $jp = xS           |
+	Bs | SJP   | Store $jp to Register                 | xD = $jp           |
 	
-	Us | SIP   | Store Instruction Pointer to Register | xD = $ip + Im4 + 1  |
-	Bs | LIP   | Load Instructon Pointer from $jp      | $ip = $jp           |
-	Us | SIG   | Toggle Status Register Bit            | $st[Im4] = !st[Im4] |
+	Bs | RELr  | Prepare Register-Relative Address   | xD = $ip + xS + 1   |
+	Us | RELs  | Prepare Immediate-Relative Address  | xD = $ip + Im4 + 1  |
+	Bs | RST   | Restore $ip and Return to Userspace | $ip = $jp           |
+	Us | SIG   | Toggle Status Register Bit          | $st[Im4] = !st[Im4] |
 	
-	Ul | LSI   | Small Immediate Load to Register      | xD = SXT(Im8)       |
-	Ul | LUI   | Upper Immediate Load to Register      | xD[15:8] = Im8      |
+	Ul | LSI   | Small Immediate Load to Register    | xD = SXT(Im8)       |
+	Ul | LUI   | Upper Immediate Load to Register    | xD[15:8] = Im8      |
 
 =============================================Opcode Map=============================================
 	_______________________________________________________________________________
@@ -259,8 +236,8 @@
 	|00001000| SRF   ||01001000| SUBry | **** ||10001000| -/-   ||11001000| BRPr  |
 	|00001001| LJP   ||01001001| SUBsx | **** ||10001001| -/-   ||11001001| -/-   |
 	|00001010| SJP   ||01001010| SUBsy | **** ||10001010| -/-   ||11001010| -/-   |
-	|00001011| LIP   ||01001011| SUBc  | **** ||10001011| -/-   ||11001011| -/-   |
-	|00001100| SIP   ||01001100| CMPx  | **** ||10001100| -/-   ||11001100| -/-   |
+	|00001011| RELr  ||01001011| SUBc  | **** ||10001011| -/-   ||11001011| -/-   |
+	|00001100| RELs  ||01001100| CMPx  | **** ||10001100| -/-   ||11001100| -/-   |
 	|00001101| JMPo  ||01001101| CMPy  | **** ||10001101| -/-   ||11001101| -/-   |
 	|00001110| JNL   ||01001110| PEN   | *00* ||10001110| -/-   ||11001110| -/-   |
 	|00001111| PRDR  ||01001111| PEB   | *00* ||10001111| -/-   ||11001111| -/-   |
@@ -295,7 +272,7 @@
 	|00101010| -/-   ||01101010| RBRr  |      ||10100010| -/-   ||11101010| STry+ |
 	|00101011| -/-   ||01101011| RBRs  |      ||10101011| -/-   ||11101011| +STry |
 	|00101100| -/-   ||01101100| ASR   | *0** ||10100100| -/-   ||11101100| STiy  |
-	|00101101| -/-   ||01101101| --    |      ||10101101| -/-   ||11101101| -STiy |
+	|00101101| -/-   ||01101101| RST   |      ||10101101| -/-   ||11101101| -STiy |
 	|00101110| -/-   ||01101110| ABRr  | *00* ||10100110| -/-   ||11101110| STiy+ |
 	|00101111| -/-   ||01101111| ABRs  | *00* ||10101111| -/-   ||11101111| +STiy |
 	|________|_______||________|_______|______||________|_______||________|_______|
