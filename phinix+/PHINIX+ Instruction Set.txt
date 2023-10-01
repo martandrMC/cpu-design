@@ -20,13 +20,13 @@
 	| x0 | $zr | Constant Zero | None   |		| y0 | $a3 | Argument             | Caller |
 	| x1 | $at | Asm Temporary | Caller |		| y1 | $a4 | Argument             | Caller |
 	| x2 | $rp | Return Pointer| Caller |		| y2 | $a5 | Argument             | Caller |
-	| x3 | $t0 | Temporary     | Caller |		| y3 | $t3 | Temporary            | Caller |
-	| x4 | $t1 | Temporary     | Caller |		| y4 | $t4 | Temporary            | Caller |
-	| x5 | $t2 | Temporary     | Caller |		| y5 | $t5 | Temporary            | Caller |
-	| x6 | $a0 | Argument      | Caller |		| y6 | $t6 | Temporary            | Caller |
-	| x7 | $a1 | Argument      | Caller |		| y7 | $t7 | Temporary            | Caller |
-	| x8 | $a2 | Argument      | Caller |		| y8 | $s6 | Saved Pointer        | Callee |
-	| x9 | $s0 | Saved Value   | Callee |		| y9 | $s7 | Saved Pointer        | Callee |
+	| x3 | $a0 | Argument      | Caller |		| y3 | $t3 | Temporary            | Caller |
+	| x4 | $a1 | Argument      | Caller |		| y4 | $t4 | Temporary            | Caller |
+	| x5 | $a2 | Argument      | Caller |		| y5 | $t5 | Temporary            | Caller |
+	| x6 | $t0 | Temporary     | Caller |		| y6 | $s6 | Saved Pointer        | Callee |
+	| x7 | $t1 | Temporary     | Caller |		| y7 | $s7 | Saved Pointer        | Callee |
+	| x8 | $t2 | Temporary     | Caller |		| y8 | $s8 | Saved Pointer        | Callee |
+	| x9 | $s0 | Saved Value   | Callee |		| y9 | $s9 | Saved Pointer        | Callee |
 	| xA | $s1 | Saved Value   | Callee |		| yA | $gp | Global Pointer       | Callee |
 	| xB | $s2 | Saved Value   | Callee |		| yB | $sp | User Stack Pointer   | Callee |
 	| xC | $s3 | Saved Value   | Callee |		| yC | $k0 | System Register      | Callee | *1
@@ -213,8 +213,8 @@
 	Bs | LJP   | Load $jp from Register                | $jp = xS           |
 	Bs | SJP   | Store $jp to Register                 | xD = $jp           |
 	
-	Bs | RELr  | Prepare Register-Relative Address   | xD = $ip + xS + 1   |
-	Us | RELs  | Prepare Immediate-Relative Address  | xD = $ip + Im4 + 1  |
+	Bs | RELr  | Prepare Register-Relative Address   | yD = $ip + xS + 1   |
+	Us | RELs  | Prepare Immediate-Relative Address  | yD = $ip + Im4 + 1  |
 	Bs | RST   | Restore $ip and Return to Userspace | $ip = $jp           |
 	Us | SIG   | Toggle Status Register Bit          | $st[Im4] = !st[Im4] |
 	
