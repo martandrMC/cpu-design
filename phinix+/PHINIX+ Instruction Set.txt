@@ -201,25 +201,25 @@
 
 =====================================Data Movement Instructions=====================================44
 
-	Bs | MOVxx | Move Primary to Primary               | xD = xS            |
-	Bs | MOVyx | Move Primary to Secondary             | yD = xS            |
-	Bs | MOVxy | Move Secondary to Primary             | xD = yS            |
-	Bs | MOVyy | Move Secondary to Secondary           | yD = yS            |
+	Bs | MOVxx | Move Primary to Primary                     | xD = xS             |
+	Bs | MOVyx | Move Primary to Secondary                   | yD = xS             |
+	Bs | MOVxy | Move Secondary to Primary                   | xD = yS             |
+	Bs | MOVyy | Move Secondary to Secondary                 | yD = yS             |
 	
-	Bs | LST   | Load Status Register from Register    | $st = xS           |
-	Bs | SST   | Store Status Register to Register     | xD = $st           |
-	Bs | LRF   | Load Reference Register from Register | $rf = xS           |
-	Bs | SRF   | Store Reference Register to Register  | xD = $rf           |
-	Bs | LJP   | Load $jp from Register                | $jp = xS           |
-	Bs | SJP   | Store $jp to Register                 | xD = $jp           |
+	Bs | LST   | Load Status Register from Register          | $st = xS            |
+	Bs | SST   | Store Status Register to Register           | xD = $st            |
+	Bs | LRF   | Load Reference Register from Register       | $rf = xS            |
+	Bs | SRF   | Store Reference Register to Register        | xD = $rf            |
+	Bs | LJP   | Load $jp from Register                      | $jp = xS            |
+	Bs | SJP   | Store $jp to Register                       | xD = $jp            |
 	
-	Bs | RELr  | Prepare Register-Relative Address   | yD = $ip + xS + 1   |
-	Us | RELs  | Prepare Immediate-Relative Address  | yD = $ip + Im4 + 1  |
-	Bs | RST   | Restore $ip and Return to Userspace | $ip = $jp           |
-	Us | SIG   | Toggle Status Register Bit          | $st[Im4] = !st[Im4] |
+	Bs | RELx  | Prepare Primary Register-Relative Address   | xD = $ip + xS + 1   |
+	Us | RELy  | Prepare Secondary Register-Relative Address | yD = $ip + yS + 1   |
+	Bs | RST   | Restore $ip and Return to Userspace         | $ip = $jp           |
+	Us | SIG   | Toggle Status Register Bit                  | $st[Im4] = !st[Im4] |
 	
-	Ul | LSI   | Small Immediate Load to Register    | xD = SXT(Im8)       |
-	Ul | LUI   | Upper Immediate Load to Register    | xD[15:8] = Im8      |
+	Ul | LSI   | Small Immediate Load to Register            | xD = SXT(Im8)       |
+	Ul | LUI   | Upper Immediate Load to Register            | xD[15:8] = Im8      |
 
 =============================================Opcode Map=============================================
 	_______________________________________________________________________________
@@ -236,8 +236,8 @@
 	|00001000| SRF   ||01001000| SUBry | **** ||10001000| -/-   ||11001000| BRPr  |
 	|00001001| LJP   ||01001001| SUBsx | **** ||10001001| -/-   ||11001001| -/-   |
 	|00001010| SJP   ||01001010| SUBsy | **** ||10001010| -/-   ||11001010| -/-   |
-	|00001011| RELr  ||01001011| SUBc  | **** ||10001011| -/-   ||11001011| -/-   |
-	|00001100| RELs  ||01001100| CMPx  | **** ||10001100| -/-   ||11001100| -/-   |
+	|00001011| RELx  ||01001011| SUBc  | **** ||10001011| -/-   ||11001011| -/-   |
+	|00001100| RELy  ||01001100| CMPx  | **** ||10001100| -/-   ||11001100| -/-   |
 	|00001101| JMPo  ||01001101| CMPy  | **** ||10001101| -/-   ||11001101| -/-   |
 	|00001110| JNL   ||01001110| PEN   | *00* ||10001110| -/-   ||11001110| -/-   |
 	|00001111| PRDR  ||01001111| PEB   | *00* ||10001111| -/-   ||11001111| -/-   |
