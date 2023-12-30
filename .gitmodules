@@ -1,0 +1,3 @@
+[submodule "phinix/emulator"]
+	path = phinix/emulator
+	url = https://github.com/martandrMC/phinix-emu.git
